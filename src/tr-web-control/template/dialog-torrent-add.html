@@ -26,6 +26,14 @@
 					</td>
 				</tr>
 				<tr>
+					<td class="title"><span >tracker地址</span></td>
+					<td>
+						<textarea id="tracker_url" style="height:130px;"></textarea>
+						<input type="checkbox" id="add-tracker-url" style="width:20px;"/><label>增加tracker地址</label>
+					</td>
+					
+				</tr>
+				<tr>
 					<td colspan="2">
 						<hr/>
 					</td>
@@ -97,7 +105,10 @@
 
 		thisDialog.find("#chkautostart").prop("checked", system.serverConfig["start-added-torrents"]);
 		thisDialog.find("#download-dir").combobox();
-
+		let tracker_url_local_storge = localStorage.getItem("tracker_url");
+		if (tracker_url_local_storge!=null){
+			thisDialog.find("#tracker_url").val(tracker_url_local_storge)
+		}		
 		// label 
 		var labelPage = {
 			divSelectedList: $("#divSelectedList", thisDialog),
@@ -242,6 +253,26 @@
 			else if (url!="")
 			{
 				var urls = url.split("\n");
+				var autoaddtrackerurl = thisDialog.find("#add-tracker-url").prop("checked");				
+				if (autoaddtrackerurl){
+					console.log("autoaddtrackerurl")
+					var tracker_url = thisDialog.find("#tracker_url").val().split(" ").join("");					
+					let all_tracker_url = ""
+					if (tracker_url!=""){
+						localStorage.setItem("tracker_url",tracker_url)
+						let tracker_url_arr = tracker_url.split("\n")
+						for (var i = tracker_url_arr.length - 1; i >= 0; i--) {
+							 tracker_url_arr[i] = "tr="+encodeURIComponent( tracker_url_arr[i])
+						}
+						all_tracker_url = tracker_url_arr.join("&")
+					}
+					console.log("all_tracker_url",all_tracker_url)
+					
+					for (var i = urls.length - 1; i >= 0; i--) {
+						urls[i] = urls[i] + "&"+all_tracker_url
+					}
+					console.log("url",url)
+				}				
 				system.addTorrentsToServer(urls,urls.length,autostart,dir,labelPage.getLabels());
 				urls = null;
 				thisDialog.dialog("close");

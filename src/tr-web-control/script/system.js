@@ -1299,7 +1299,7 @@ var system = {
 					options: {
 						title: system.lang.toolbar["add-torrent"],
 						width: 620,
-						height: system.config.nav.labels ? 600 : 400,
+						height: system.config.nav.labels ? 750 : 550,
 						resizable: true
 					}
 				});
